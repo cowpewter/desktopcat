@@ -6,6 +6,7 @@ var is_dragging = false
 var drag_offset = Vector2()
 var idle_timer = 0.0
 var is_idling = false
+var is_menu_open = false;
 
 @onready var sprite = get_node('CatSprite')
 @onready var area = get_node('CatArea')
@@ -15,6 +16,7 @@ var is_idling = false
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	area.input_event.connect(_on_area_input)
+	menu.connect('popup_hide', _on_menu_hide)
 	_pick_new_direction()
 
 func _physics_process(delta):
@@ -30,6 +32,10 @@ func _physics_process(delta):
 		if idle_timer <= 0:
 			is_idling = false
 			_pick_new_direction()
+		return
+		
+	if (is_menu_open):
+		sprite.play('idle')
 		return
 
 	var win_pos = Vector2(DisplayServer.window_get_position())
@@ -51,6 +57,9 @@ func _physics_process(delta):
 		direction.x = -direction.x
 	if (win_pos.y <= min_y and direction.y < 0) or (win_pos.y >= max_y and direction.y > 0):
 		direction.y = -direction.y
+		
+	if (not is_idling):
+		_maybe_idle()
 
 func _update_animation(_win_pos):
 	if direction.x < 0:
@@ -59,7 +68,7 @@ func _update_animation(_win_pos):
 		sprite.play("walk_right")
 
 func _maybe_idle():
-	if randf() < 0.3:
+	if randf() < 0.0025:
 		is_idling = true
 		idle_timer = randf_range(1.0, 3.0)
 		sprite.play("idle")
@@ -80,3 +89,9 @@ func _on_area_input(_viewport, event, _shape_idx):
 			_pick_new_direction()
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
 		menu.popup(Rect2(get_global_mouse_position(), Vector2(0, 0)))
+		speed = 0
+		is_menu_open = true;
+		
+func _on_menu_hide():
+	speed = 100
+	is_menu_open = false;
