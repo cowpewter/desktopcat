@@ -7,6 +7,8 @@ var drag_offset = Vector2()
 var idle_timer = 0.0
 var is_idling = false
 var is_menu_open = false;
+var last_idle = 0;
+var min_idle_cooldown = 5000; # 5 sec min between idles
 
 @onready var sprite = get_node('CatSprite')
 @onready var area = get_node('CatArea')
@@ -31,6 +33,7 @@ func _physics_process(delta):
 		idle_timer -= delta
 		if idle_timer <= 0:
 			is_idling = false
+			last_idle = Time.get_ticks_msec()
 			_pick_new_direction()
 		return
 		
@@ -51,7 +54,7 @@ func _physics_process(delta):
 	var max_x = usable.position.x + usable.size.x - real_size.x
 	var max_y = usable.position.y + usable.size.y - real_size.y
 
-	debug.text = str(round(win_pos.y)) + "/" + str(max_y)
+	# debug.text = str(last_idle) + '/' + str(Time.get_ticks_msec() - last_idle)
 
 	if (win_pos.x <= min_x and direction.x < 0) or (win_pos.x >= max_x and direction.x > 0):
 		direction.x = -direction.x
@@ -68,7 +71,7 @@ func _update_animation(_win_pos):
 		sprite.play("walk_right")
 
 func _maybe_idle():
-	if randf() < 0.0025:
+	if (Time.get_ticks_msec() - last_idle) > min_idle_cooldown and randf() < 0.01:
 		is_idling = true
 		idle_timer = randf_range(1.0, 3.0)
 		sprite.play("idle")
