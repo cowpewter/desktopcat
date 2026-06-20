@@ -1,0 +1,82 @@
+extends Node2D
+
+var speed = 100
+var direction = Vector2(1, 0)
+var is_dragging = false
+var drag_offset = Vector2()
+var idle_timer = 0.0
+var is_idling = false
+
+@onready var sprite = get_node('CatSprite')
+@onready var area = get_node('CatArea')
+@onready var menu = get_node('ContextMenu')
+@onready var debug = get_node('Label')
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	area.input_event.connect(_on_area_input)
+	_pick_new_direction()
+
+func _physics_process(delta):
+	if is_dragging:
+		var mouse_pos = Vector2(DisplayServer.mouse_get_position())
+		var new_win_pos = mouse_pos - drag_offset
+		DisplayServer.window_set_position(Vector2i(new_win_pos))
+		sprite.play("pick_up")
+		return
+
+	if is_idling:
+		idle_timer -= delta
+		if idle_timer <= 0:
+			is_idling = false
+			_pick_new_direction()
+		return
+
+	var win_pos = Vector2(DisplayServer.window_get_position())
+	win_pos += direction * speed * delta
+	DisplayServer.window_set_position(Vector2i(win_pos))
+	_update_animation(win_pos)
+	
+	var usable = DisplayServer.screen_get_usable_rect()
+	var real_size = Vector2(DisplayServer.window_get_size())
+
+	var min_x = usable.position.x
+	var min_y = usable.position.y
+	var max_x = usable.position.x + usable.size.x - real_size.x
+	var max_y = usable.position.y + usable.size.y - real_size.y
+
+	debug.text = str(round(win_pos.y)) + "/" + str(max_y)
+
+	if (win_pos.x <= min_x and direction.x < 0) or (win_pos.x >= max_x and direction.x > 0):
+		direction.x = -direction.x
+	if (win_pos.y <= min_y and direction.y < 0) or (win_pos.y >= max_y and direction.y > 0):
+		direction.y = -direction.y
+
+func _update_animation(_win_pos):
+	if direction.x < 0:
+		sprite.play("walk_left")
+	else:
+		sprite.play("walk_right")
+
+func _maybe_idle():
+	if randf() < 0.3:
+		is_idling = true
+		idle_timer = randf_range(1.0, 3.0)
+		sprite.play("idle")
+
+func _pick_new_direction():
+	var angle = randf() * TAU
+	direction = Vector2(cos(angle), sin(angle)).normalized()
+
+func _on_area_input(_viewport, event, _shape_idx):
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed:
+			is_dragging = true
+			var mouse_pos = Vector2(DisplayServer.mouse_get_position())
+			var win_pos = Vector2(DisplayServer.window_get_position())
+			drag_offset = mouse_pos - win_pos
+		else:
+			is_dragging = false
+			_pick_new_direction()
+	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
+		menu.popup(Rect2(get_global_mouse_position(), Vector2(0, 0)))
