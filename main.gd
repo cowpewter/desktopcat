@@ -65,10 +65,17 @@ func _physics_process(delta):
 		_maybe_idle()
 
 func _update_animation(_win_pos):
-	if direction.x < 0:
-		sprite.play("walk_left")
+	if abs(direction.x) >= abs(direction.y):
+		if direction.x <= 0:
+			sprite.play("walk_left")
+		else:
+			sprite.play("walk_right")
 	else:
-		sprite.play("walk_right")
+		if direction.y <= 0:
+			sprite.play("walk_up")
+		else:
+			sprite.play("walk_down")
+	
 
 func _maybe_idle():
 	if (Time.get_ticks_msec() - last_idle) > min_idle_cooldown and randf() < 0.01:
