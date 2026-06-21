@@ -9,14 +9,20 @@ var is_idling = false
 var is_menu_open = false;
 var last_idle = 0;
 var min_idle_cooldown = 5000; # 5 sec min between idles
+var currentSprite = null;
+var allSprites = null;
 
-@onready var sprite = get_node('CatSprite')
+@onready var orangeSprite = get_node('CatSpriteOrange')
+@onready var whiteSprite = get_node('CatSpriteWhite')
+@onready var blackSprite = get_node('CatSpriteBlack')
 @onready var area = get_node('CatArea')
 @onready var menu = get_node('ContextMenu')
 @onready var debug = get_node('Label')
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	allSprites = [orangeSprite, whiteSprite, blackSprite]
+	_set_cat(orangeSprite);
 	area.input_event.connect(_on_area_input)
 	menu.connect('popup_hide', _on_menu_hide)
 	_pick_new_direction()
@@ -26,7 +32,7 @@ func _physics_process(delta):
 		var mouse_pos = Vector2(DisplayServer.mouse_get_position())
 		var new_win_pos = mouse_pos - drag_offset
 		DisplayServer.window_set_position(Vector2i(new_win_pos))
-		sprite.play("pick_up")
+		currentSprite.play("pick_up")
 		return
 
 	if is_idling:
@@ -38,7 +44,7 @@ func _physics_process(delta):
 		return
 		
 	if (is_menu_open):
-		sprite.play('idle')
+		currentSprite.play('idle')
 		return
 
 	var win_pos = Vector2(DisplayServer.window_get_position())
@@ -67,25 +73,30 @@ func _physics_process(delta):
 func _update_animation(_win_pos):
 	if abs(direction.x) >= abs(direction.y):
 		if direction.x <= 0:
-			sprite.play("walk_left")
+			currentSprite.play("walk_left")
 		else:
-			sprite.play("walk_right")
+			currentSprite.play("walk_right")
 	else:
 		if direction.y <= 0:
-			sprite.play("walk_up")
+			currentSprite.play("walk_up")
 		else:
-			sprite.play("walk_down")
-	
+			currentSprite.play("walk_down")
 
 func _maybe_idle():
 	if (Time.get_ticks_msec() - last_idle) > min_idle_cooldown and randf() < 0.01:
 		is_idling = true
 		idle_timer = randf_range(1.0, 3.0)
-		sprite.play("idle")
+		currentSprite.play("idle")
 
 func _pick_new_direction():
 	var angle = randf() * TAU
 	direction = Vector2(cos(angle), sin(angle)).normalized()
+	
+func _set_cat(newCat):
+	for sprite in allSprites:
+		sprite.visible = false
+	currentSprite = newCat
+	currentSprite.visible = true
 
 func _on_area_input(_viewport, event, _shape_idx):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
