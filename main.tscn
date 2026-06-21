@@ -40,6 +40,10 @@ region = Rect2(384, 768, 64, 64)
 atlas = ExtResource("1_ig7tw")
 region = Rect2(448, 768, 64, 64)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_sn1fb"]
+atlas = ExtResource("1_ig7tw")
+region = Rect2(128, 4160, 64, 64)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_getpj"]
 atlas = ExtResource("1_ig7tw")
 region = Rect2(0, 128, 64, 64)
@@ -170,6 +174,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_sn1fb")
+}],
+"loop": 1,
+"name": &"pick_up",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_getpj")
 }, {
 "duration": 1.0,
@@ -292,6 +304,10 @@ region = Rect2(384, 768, 64, 64)
 [sub_resource type="AtlasTexture" id="AtlasTexture_h8e4i"]
 atlas = ExtResource("3_1bvp3")
 region = Rect2(448, 768, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yvsr8"]
+atlas = ExtResource("3_1bvp3")
+region = Rect2(128, 4160, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4lmeg"]
 atlas = ExtResource("3_1bvp3")
@@ -422,6 +438,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_yvsr8")
+}],
+"loop": 1,
+"name": &"pick_up",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_4lmeg")
 }, {
 "duration": 1.0,
@@ -544,6 +568,10 @@ region = Rect2(384, 768, 64, 64)
 [sub_resource type="AtlasTexture" id="AtlasTexture_jx0wj"]
 atlas = ExtResource("2_lquwl")
 region = Rect2(448, 768, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vieuh"]
+atlas = ExtResource("2_lquwl")
+region = Rect2(128, 4160, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kkkcx"]
 atlas = ExtResource("2_lquwl")
@@ -674,6 +702,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_vieuh")
+}],
+"loop": 1,
+"name": &"pick_up",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_kkkcx")
 }, {
 "duration": 1.0,
@@ -776,21 +812,21 @@ visibility_layer = 513
 material = SubResource("CanvasItemMaterial_4ma8k")
 scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_vivmo")
-animation = &"walk_up"
+animation = &"pick_up"
 centered = false
 
 [node name="CatSpriteWhite" type="AnimatedSprite2D" parent="." unique_id=1574530855]
 visible = false
 scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_rrgdl")
-animation = &"walk_down"
+animation = &"pick_up"
 centered = false
 
 [node name="CatSpriteBlack" type="AnimatedSprite2D" parent="." unique_id=432854454]
 visible = false
 scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_oxema")
-animation = &"walk_down"
+animation = &"pick_up"
 centered = false
 
 [node name="CatArea" type="Area2D" parent="." unique_id=1426781617]

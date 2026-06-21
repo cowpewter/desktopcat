@@ -13,7 +13,7 @@ func _ready() -> void:
 	sprite_menu.index_pressed.connect(_on_sprite_pressed)
 
 func _on_index_pressed(index: int):
-	if index == 0:
+	if index == 1:
 		get_tree().quit()
 		
 func _on_sprite_pressed(index: int):
